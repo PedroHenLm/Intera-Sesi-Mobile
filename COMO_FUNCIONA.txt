@@ -1,0 +1,291 @@
+========================================================================
+ API SECRETARIA - Como funciona (explicacao de estudo)
+========================================================================
+
+Esta e uma API REST simples feita com Node.js + TypeScript, seguindo o
+padrao MVC (Model - View - Controller, adaptado para APIs sem "View").
+O recurso de exemplo e "Task" (tarefa), com CRUD completo.
+
+------------------------------------------------------------------------
+1. VISAO GERAL DO FLUXO DE UMA REQUISICAO
+------------------------------------------------------------------------
+
+Quando alguem chama, por exemplo:
+
+    POST /api/tasks   { "title": "Estudar TypeScript" }
+
+a requisicao passa pelas seguintes camadas, nesta ordem:
+
+    server.ts
+       -> app.ts (monta os middlewares globais)
+          -> routes (define qual URL chama qual controller)
+             -> middlewares/validate.ts (valida o corpo da requisicao)
+                -> controllers (le req, chama o service, monta a res)
+                   -> services (regra de negocio)
+                      -> repositories (guarda/busca os dados)
+
+Cada camada tem uma responsabilidade unica. Isso facilita estudar,
+testar e trocar partes sem afetar o resto (ex: trocar o repositorio
+em memoria por um banco de dados real, sem mexer no controller).
+
+------------------------------------------------------------------------
+2. ESTRUTURA DE PASTAS (src/)
+------------------------------------------------------------------------
+
+config/
+  env.ts
+    - Le variaveis de ambiente (.env) usando "dotenv".
+    - Valida essas variaveis com "zod" (ex: PORT precisa ser numero).
+    - Se algo estiver invalido, a aplicacao nem sobe (falha rapido).
+
+types/
+  task.ts
+    - Define os "formatos" de dados em TypeScript:
+      Task (o que existe no banco), CreateTaskInput (o que chega ao
+      criar) e UpdateTaskInput (o que chega ao atualizar).
+
+repositories/
+  task.repository.ts
+    - E a camada "Model" simplificada: guarda as tasks em um array na
+      memoria (nao usa banco de dados, e so para estudo).
+    - Metodos: findAll, findById, create, update, delete.
+    - Se o processo reiniciar, os dados somem (e so em memoria).
+
+services/
+  task.service.ts
+    - Contem a regra de negocio.
+    - Ex: se tentar buscar/atualizar/deletar uma task que nao existe,
+      lanca um NotFoundError (erro 404).
+    - Quem chama o repository e o service, nunca o controller direto.
+
+validators/
+  task.validator.ts
+    - Schemas do "zod" que descrevem o formato esperado dos dados:
+      createTaskSchema  -> title obrigatorio (string nao vazia)
+      updateTaskSchema  -> title e/ou done, pelo menos um dos dois
+      taskIdSchema      -> id precisa ser um uuid valido
+
+middlewares/
+  validate.ts
+    - Middleware generico que roda um schema do zod contra
+      req.body, req.params ou req.query.
+    - Se falhar, gera um BadRequestError (400) com a mensagem do zod.
+    - Se passar, os dados validados substituem os originais.
+
+  not-found.ts
+    - Roda quando nenhuma rota bate com a URL chamada -> responde 404.
+
+  error-handler.ts
+    - Middleware de erro "final". Qualquer erro lancado em qualquer
+      lugar da aplicacao cai aqui.
+    - Se for um HttpError (BadRequestError, NotFoundError), usa o
+      status certo (400, 404). Senao, assume 500 (erro interno).
+    - Em ambiente de "development", tambem devolve o stack trace do
+      erro no JSON, para facilitar o debug durante o estudo.
+
+controllers/
+  task.controller.ts
+    - Le a requisicao (req.params, req.body), chama o service
+      correspondente e devolve a resposta (res.json / res.status).
+    - Nao tem regra de negocio nem acesso direto aos dados: so
+      "traduz" HTTP para chamadas de service e volta.
+
+routes/
+  task.routes.ts
+    - Declara as rotas do recurso "task" e liga cada uma no par
+      (validate -> controller):
+        GET    /            -> list
+        GET    /:id         -> getById
+        POST   /            -> create
+        PATCH  /:id         -> update
+        DELETE /:id         -> remove
+
+  index.ts
+    - Router "raiz" da API. Define GET /health e monta
+      o taskRouter dentro do prefixo /tasks.
+
+utils/
+  http-error.ts
+    - Classes de erro personalizadas: HttpError (base), NotFoundError
+      (404) e BadRequestError (400). Usadas pelos services/middlewares
+      para sinalizar problemas de forma padronizada.
+
+  async-handler.ts
+    - Helper para envolver rotas assincronas e garantir que erros
+      dentro de "async function" cheguem ate o error-handler.
+      (Hoje os controllers sao sincronos, mas o helper fica pronto
+      para quando o repository virar um banco de dados real, que
+      exige await.)
+
+config/
+  swagger.ts
+    - O "swagger-jsdoc" le comentarios especiais (bloco /** comentario ... */)
+      dentro de src/routes/*.ts e monta o restante da especificacao
+      (cada endpoint, parametros, respostas) a partir deles.
+
+app.ts
+  - Monta a aplicacao Express:
+      helmet()  -> cabecalhos de seguranca HTTP (com CSP ajustado para
+                   permitir o Swagger UI funcionar)
+      cors()    -> permite chamadas de outras origens
+      express.json() -> entende corpo JSON nas requisicoes
+      morgan()  -> loga cada requisicao no terminal
+      router (/api) -> todas as rotas da API
+      swagger-ui-express (/api/docs) -> pagina interativa da documentacao
+      /api/docs.json -> especificacao "crua", em JSON
+      notFoundHandler -> pega rotas inexistentes
+      errorHandler -> pega qualquer erro nao tratado
+
+server.ts
+  - Ponto de entrada. Cria a app (createApp) e chama app.listen(PORT).
+  - E o arquivo que voce roda com "npm run dev" ou "npm start".
+
+------------------------------------------------------------------------
+3. ENDPOINTS DISPONIVEIS
+------------------------------------------------------------------------
+
+GET    /api/health        -> { "status": "ok" }          (checagem)
+GET    /api/tasks         -> lista todas as tasks
+GET    /api/tasks/:id     -> retorna uma task pelo id (uuid)
+POST   /api/tasks         -> cria task.  body: { "title": "..." }
+PATCH  /api/tasks/:id     -> atualiza.    body: { "title"?, "done"? }
+DELETE /api/tasks/:id     -> remove a task (responde 204, sem corpo)
+
+Exemplo de uso (curl):
+
+  curl -X POST http://localhost:3000/api/tasks \
+    -H "Content-Type: application/json" \
+    -d '{"title": "Estudar TypeScript"}'
+
+Resposta:
+
+  { "data": { "id": "uuid...", "title": "Estudar TypeScript",
+              "done": false, "createdAt": "2026-07-30T..." } }
+
+------------------------------------------------------------------------
+4. COMO OS ERROS FUNCIONAM
+------------------------------------------------------------------------
+
+- Corpo invalido (ex: POST sem "title")     -> 400 Bad Request
+- ID que nao existe (GET/PATCH/DELETE)      -> 404 Not Found
+- Rota que nao existe (ex: /api/blabla)     -> 404 Not Found
+- Erro inesperado no codigo                 -> 500 Internal Server Error
+
+Todos os erros voltam no mesmo formato:
+
+  { "error": { "message": "..." } }
+
+------------------------------------------------------------------------
+5. DOCUMENTACAO SWAGGER (OpenAPI)
+------------------------------------------------------------------------
+
+Com o servidor rodando, a documentacao interativa fica disponivel em:
+
+  http://localhost:3000/api/docs        -> Swagger UI (pagina interativa,
+                                            da pra testar os endpoints
+                                            direto no navegador)
+  http://localhost:3000/api/docs.json   -> especificacao OpenAPI "crua"
+                                            em JSON (util para importar
+                                            no Postman/Insomnia)
+
+Como funciona por baixo dos panos:
+  - Cada rota em src/routes/task.routes.ts (e index.ts) tem um bloco de
+    comentario "/** @openapi ... */" logo acima dela, escrito em YAML,
+    descrevendo metodo, parametros, corpo esperado e respostas possiveis.
+  - src/config/swagger.ts usa a lib "swagger-jsdoc" para ler esses
+    comentarios e montar a especificacao OpenAPI completa (junto com
+    informacoes gerais: titulo, versao, servers, schemas reutilizaveis
+    como Task/CreateTaskInput/UpdateTaskInput/Error).
+  - src/app.ts usa "swagger-ui-express" para servir essa especificacao
+    como uma pagina HTML interativa em /api/docs.
+
+Ou seja: NAO existe um arquivo swagger.yaml separado para manter
+atualizado manualmente. A documentacao "mora" ao lado de cada rota, no
+proprio codigo. Quando voce criar ou mudar um endpoint, so precisa
+atualizar (ou adicionar) o comentario @openapi correspondente.
+
+------------------------------------------------------------------------
+6. COMO RODAR
+------------------------------------------------------------------------
+
+  cp .env.example .env
+  npm install
+  npm run dev        -> inicia com watch (reinicia sozinho ao salvar)
+
+Outros scripts uteis:
+  npm run build       -> compila TypeScript para dist/
+  npm start           -> roda a versao compilada (dist/server.js)
+  npm run lint         -> checa problemas de estilo/codigo (ESLint)
+  npm run format       -> formata o codigo automaticamente (Prettier)
+  npm run typecheck    -> so checa tipos, sem gerar arquivos
+
+------------------------------------------------------------------------
+7. POR QUE ESSA SEPARACAO (MVC) AJUDA A ESTUDAR
+------------------------------------------------------------------------
+
+- Controller nao sabe "onde" os dados estao guardados.
+- Service nao sabe nada sobre HTTP (nao ve req/res).
+- Repository nao sabe nada sobre regra de negocio.
+
+------------------------------------------------------------------------
+8. MVC "PURO" x MVC + SERVICE/REPOSITORY (por que so 3 letras nao bastam)
+------------------------------------------------------------------------
+
+MVC classico (Model - View - Controller), da era de apps desktop/GUI
+(ex: Smalltalk, e depois frameworks web como Rails), define so 3 papeis:
+
+  Model      -> dados + regra de negocio, tudo junto
+  View       -> renderiza a interface (HTML, tela, etc)
+  Controller -> recebe a entrada, chama o Model, escolhe a View
+
+Numa API REST nao existe "View" de verdade (nao ha HTML sendo
+renderizado) - a "view" e so o JSON que o controller devolve. Por isso
+esse projeto e descrito como "MVC adaptado para APIs sem View": o
+Controller continua existindo, so a View que nao se aplica.
+
+Ja o "Model" sempre fez DUAS coisas ao mesmo tempo, mesmo no MVC
+classico:
+  1) Regra de negocio      (ex: "nao pode deletar uma task que nao existe")
+  2) Acesso aos dados      (ex: "como eu leio/escrevo no banco/array/API")
+
+Colocar as duas coisas no mesmo arquivo funciona em exemplos pequenos,
+mas atrapalha rapido em projetos reais:
+  - Fica dificil testar a regra de negocio sem precisar de um banco de
+    dados de verdade rodando.
+  - Fica dificil trocar o lugar onde os dados ficam guardados (memoria
+    -> Postgres -> Mongo) sem mexer na regra de negocio.
+  - Regras que envolvem mais de uma fonte de dados nao tem um lugar
+    limpo para morar.
+
+Por isso, na pratica (Node.js, NestJS, Spring, Laravel, etc.), o
+"Model" costuma ser dividido em duas camadas:
+
+  Repository -> SO acesso a dados (findById, create, update, delete...)
+                Neste projeto: repositories/task.repository.ts
+                E literalmente o "Model" do MVC classico, so que com um
+                nome que descreve o que ele faz.
+
+  Service    -> SO regra de negocio, chamando o repository por baixo.
+                Neste projeto: services/task.service.ts
+                (ex: lanca NotFoundError se o id nao existir)
+
+O Controller continua exatamente igual ao MVC classico - ele so passa
+a conversar com um Service em vez de falar direto com o Model.
+
+Resumindo com uma tabela:
+
+  MVC classico     Este projeto              Responsabilidade
+  ------------     ------------------------- ---------------------------
+  View             (nao existe / e o JSON)   apresentar a resposta
+  Controller       controllers/              traduzir HTTP <-> chamadas
+  Model            services/ + repositories/ regra de negocio + dados
+                   (Model = Service + Repository)
+
+Esse estilo (Controller + Service + Repository, sem View) e as vezes
+chamado de "MVCS" (Model-View-Controller-Service) ou arquitetura em
+camadas ("layered architecture" / "3-tier architecture"). Na pratica e
+o "MVC" que voce realmente encontra em APIs Node.js profissionais - o
+MVC "puro", com Model unico, e mais uma simplificacao didatica do que
+algo usado em projetos reais de producao.
+
+========================================================================
