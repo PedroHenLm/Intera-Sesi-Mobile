@@ -8,9 +8,9 @@ export const userService = {
         return await userRepository.findAll()
     },
 
-    async getById(id: string): Promise<User[]>{
+    async getById(id: string): Promise<User>{
         const usuario = await userRepository.findById(id)
-        if (!usuario) throw new NotFoundError(`Task with id "${id}" not found`);
+        if (!usuario) throw new NotFoundError(`User with id "${id}" not found`);
         return usuario
     },
 

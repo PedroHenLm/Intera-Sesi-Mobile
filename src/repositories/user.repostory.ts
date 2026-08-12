@@ -9,8 +9,8 @@ class UserRepository{
         return usuarios;
     }
 
-    async findById(id: string): Promise<User[]>{
-        const usuario = await sql<User[]>`Select * from usuarios where id=${id}`
+    async findById(id: string): Promise<User | undefined>{
+        const [usuario] = await sql<User[]>`Select * from usuario where id_usuario=${id}`
         return usuario;
     }
 
@@ -23,7 +23,8 @@ class UserRepository{
             password: input.password
         }
 
-        const criar = await sql`INSERT INTO usuario(email, nome, cargo, senha ) values(${userCreation.email}, ${userCreation.name}, ${userCreation.role}, ${userCreation.nif}, ${userCreation.password} )`
+        
+        const criar = await sql`INSERT INTO usuario(email, nome, cargo, nif, senha ) values(${userCreation.email}, ${userCreation.name}, ${userCreation.role}, ${userCreation.nif}, ${userCreation.password} )`
         return  criar;
     }
 

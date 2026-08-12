@@ -3,18 +3,19 @@ import { userService } from '../services/user.service.js';
 
 
 export const userController = {
-    list(_req: Request, res: Response): void{
-        const users = userService.list()
+    async list(_req: Request, res: Response): Promise<void>{
+        const users = await userService.list()
         res.status(200).json({data: users})
     },
 
-    getById(req: Request, res:Response): void{
+   async getById(req: Request, res:Response): Promise<void>{
         const {id} = req.params as {id : string} 
-        const user = userService.getById(id)
+        const user = await userService.getById(id)
         res.status(200).json({data: user})
     },
 
-    create(req:Request, res:Response): void{
-
+    async create(req:Request, res:Response): Promise<void>{
+        const newUser = await userService.create(req.body)
+        res.status(201).json({data: newUser})
     }
 }
