@@ -18,11 +18,11 @@ export const taskController = {
     res.status(201).json({ data: task });
   },
 
-  update(req: Request, res: Response): void {
-    const { id } = req.params as { id: string };
-    const task = taskService.update(id, req.body);
-    res.status(200).json({ data: task });
-  },
+  // update(req: Request, res: Response): void {
+  //   const { id } = req.params as { id: string };
+  //   const task = taskService.update(id, req.body);
+  //   res.status(200).json({ data: task });
+  // },
 
   remove(req: Request, res: Response): void {
     const { id } = req.params as { id: string };

@@ -1,15 +1,26 @@
+export type setor = 'direction' | 'teacher' | 'inspector' | 'coordination' | 'Kitchen';
+export type status = 'aberta' | 'concluida';
+
 export interface Task {
-  id: string;
-  title: string;
-  done: boolean;
-  createdAt: string;
+  id_requisicao: number;
+  data_criacao: string;
+  prazo_estipulado: string;
+  id_origem_fk: number;
+  setor_responsavel: setor;
+  descricao: string;
+  status_req: status;
 }
 
-export type CreateTaskInput = {
-  title: string;
+export type CreateTask = {
+  data_criacao: string;
+  prazo_estipulado: string;
+  setor_responsavel: setor;
+  descricao: string;
 };
 
-export type UpdateTaskInput = {
-  title?: string;
-  done?: boolean;
+export type UpdateTask = {
+  prazo_estipulado: string;
+  setor_responsavel: setor;
+  descricao: string;
+  status_req: status;
 };

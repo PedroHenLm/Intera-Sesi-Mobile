@@ -1,43 +1,54 @@
 import { randomUUID } from 'node:crypto';
-import type { CreateTaskInput, Task, UpdateTaskInput } from '../types/task.js';
+import type { Task, CreateTask, UpdateTask } from '../types/task.js';
+import sql from '../db.js';
 
 class TaskRepository {
-  private tasks: Task[] = [];
-
-  findAll(): Task[] {
-    return this.tasks;
+  //visualizar todas as tarefas
+  async findAll(): Promise<Task[]> {
+    const task = await sql<Task[]>`SELECT * FROM requisicao`;
+    return task;
+  }
+  
+  //visualizar tarefa especifica
+  async findById(id: string): Promise<Task[] | undefined> {
+    const task = await sql<Task[]>`SELECT * FROM requisicao WHERE id_requisicao = ${id}`;
+    return task;
   }
 
-  findById(id: string): Task | undefined {
-    return this.tasks.find((task) => task.id === id);
-  }
-
-  create(input: CreateTaskInput): Task {
-    const task: Task = {
-      id: randomUUID(),
-      title: input.title,
-      done: false,
-      createdAt: new Date().toISOString(),
+  //criar nova tarefa
+  async create(input: CreateTask) {
+    const taskCreation = {
+      data_criacao: input.data_criacao,
+      prazo_estipulado: input.prazo_estipulado,
+      setor_responsavel: input.setor_responsavel,
+      descricao: input.descricao,
     };
-    this.tasks.push(task);
-    return task;
+
+    const criar =
+      await sql`INSERT INTO requisicao (data_criacao, prazo_estipulado, setor_responsavel, descricao) 
+    VALUES (
+    ${taskCreation.data_criacao},
+    ${taskCreation.prazo_estipulado},
+    ${taskCreation.setor_responsavel},
+    ${taskCreation.descricao}
+    )`;
+
+    return criar;
   }
 
-  update(id: string, input: UpdateTaskInput): Task | undefined {
-    const task = this.findById(id);
-    if (!task) return undefined;
+  // update(id: string, input: UpdateTaskInput): Task | undefined {
+  //   const task = this.findById(id);
+  //   if (!task) return undefined;
 
-    if (input.title !== undefined) task.title = input.title;
-    if (input.done !== undefined) task.done = input.done;
+  //   if (input.title !== undefined) task.title = input.title;
+  //   if (input.done !== undefined) task.done = input.done;
 
-    return task;
-  }
+  //   return task;
+  // }
 
-  delete(id: string): boolean {
-    const index = this.tasks.findIndex((task) => task.id === id);
-    if (index === -1) return false;
-    this.tasks.splice(index, 1);
-    return true;
+  async delete(id: string) {
+    const deletar = await sql`DELETE FROM requisicao WHERE id_requisicao = ${id}`;
+    return deletar;
   }
 }
 
