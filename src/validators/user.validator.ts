@@ -16,6 +16,8 @@ export const createUserSchema = z.object({
   ),
 
   nif: z.string(), // sei la qual o padrão do nif, perguntar dps
-
-  
 });
+
+export const updateUserSchema = z.object({
+  
+})

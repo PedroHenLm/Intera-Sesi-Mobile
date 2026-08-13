@@ -7,8 +7,8 @@ export const userRouter = Router();
 
 userRouter.get('/listUser', userController.list);
 
-userRouter.get('/listUser:id', userController.getById)
+userRouter.get('/listUser/:id', userController.getById)
 
 userRouter.post('/newUsuario',validate(createUserSchema), userController.create)
 
-userRouter.delete('/deleteUser:id', userController.delete)
+userRouter.delete('/deleteUser/:id', userController.delete)

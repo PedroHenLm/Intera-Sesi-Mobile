@@ -7,6 +7,7 @@ export interface User {
     role: UserRoles;
     nif: string;
     createdAt: string;
+    password?: string;
 }
 
 export type CreateUser = {
