@@ -1,7 +1,7 @@
 
 import { NotFoundError } from '../utils/http-error.js';
 import type { User, CreateUser, UpdateUser } from '../types/user.js';
-import { userRepository } from '../repositories/user.repostory.js';
+import { userRepository } from '../repositories/user.repository.js';
 
 export const userService = {
     async list(): Promise<User[]>{

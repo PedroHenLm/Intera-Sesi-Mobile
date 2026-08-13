@@ -29,7 +29,7 @@ class UserRepository{
     }
 
     async delete(id: string){
-        const deletar = await sql`Delete * from usuarios where id=${id}`
+        const deletar = await sql`Delete from usuario where id_usuario=${id}`
         return deletar
     }
 
