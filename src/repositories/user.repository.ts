@@ -45,26 +45,52 @@ class UserRepository {
             password: input.password
         }
 
-        if (input.email !== undefined) user.email = input.email;
-        if (input.name !== undefined) user.name = input.name;
-        if (input.password !== undefined) user.password = input.password;
-        if (input.nif !== undefined) user.nif = input.nif
-        if (input.role !== undefined) user.role = input.role
+        // if (input.email !== undefined) user.email = input.email;
+        // if (input.name !== undefined) user.name = input.name;
+        // if (input.password !== undefined) user.password = input.password;
+        // if (input.nif !== undefined) user.nif = input.nif
+        // if (input.role !== undefined) user.role = input.role
 
-        const update = await sql `UPDATE usuario SET email = ${user.email}, nome=${user.name}, senha=${}`
+        let query = `UPDATE usuario`
+        if (userUpdate.name) {
+            query.concat(` SET name = ${userUpdate.name} `)
+            if (userUpdate.email || userUpdate.role || userUpdate.nif || userUpdate.password) {
+                query.concat(`,`)
+            }
+        }
 
+        if (userUpdate.email) {
+            query.concat(` SET email = ${userUpdate.email} `)
+            if (userUpdate.role || userUpdate.nif || userUpdate.password) {
+                query.concat(`,`)
+            }
+        }
 
-        
+        if (userUpdate.role) {
+            query.concat(` SET role = ${userUpdate.role} `)
+            if (userUpdate.nif || userUpdate.password) {
+                query.concat(` , `)
+            }
+        }
 
-    
+        if (userUpdate.nif) {
+            query.concat(` SET nif = ${userUpdate.nif} `)
+            if (userUpdate.password) {
+                query.concat(` , `)
+            }
+        }
 
-        
-        
+        if (userUpdate.password) {
+            query.concat(` SET password = ${userUpdate.password} `)
+        }
+
+        query.concat(` where id_usuario = ${id}`)
+
+        console.log("query final: " + query);
+        const update = await sql`${query}`;
+        return update
+
     }
-
-
-
-
 }
 
 export const userRepository = new UserRepository()
