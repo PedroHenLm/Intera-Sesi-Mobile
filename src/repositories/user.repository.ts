@@ -37,9 +37,28 @@ class UserRepository {
         const user = await this.findById(id)
         if (!user) return undefined
 
+        const userUpdate = {
+            name: input.name,
+            email: input.email,
+            role: input.role,
+            nif: input.nif,
+            password: input.password
+        }
+
         if (input.email !== undefined) user.email = input.email;
         if (input.name !== undefined) user.name = input.name;
         if (input.password !== undefined) user.password = input.password;
+        if (input.nif !== undefined) user.nif = input.nif
+        if (input.role !== undefined) user.role = input.role
+
+        const update = await sql `UPDATE usuario SET email = ${user.email}, nome=${user.name}, senha=${}`
+
+
+        
+
+    
+
+        
         
     }
 
