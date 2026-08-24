@@ -20,5 +20,13 @@ export const userService = {
 
     async delete(id: string){
         return await userRepository.delete(id)
+    },
+
+    async update(id: string, input: UpdateUser): Promise<User> {
+    const updatedUser = await userRepository.update(id, input);
+    if (!updatedUser) {
+      throw new NotFoundError(`User with id "${id}" not found`);
     }
+    return updatedUser;
+  },
 }

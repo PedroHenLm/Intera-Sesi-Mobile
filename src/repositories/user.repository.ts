@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { User, CreateUser, UpdateUser } from "../types/user.js";
 import sql from "../db.js";
+import { email } from "zod/v4";
 
 class UserRepository {
 
@@ -34,16 +35,61 @@ class UserRepository {
     }
 
     async update(id: string, input: UpdateUser): Promise<User | undefined> {
+        console.log(input.email)
         const user = await this.findById(id)
         if (!user) return undefined
 
-        const userUpdate = {
-            name: input.name,
-            email: input.email,
-            role: input.role,
-            nif: input.nif,
-            password: input.password
+        const values: any[] = []
+        const updates: string[]= []
+
+        if(input.email !== undefined){
+            values.push(input.email)
+            updates.push(`email = $${values.length}`)
+            
         }
+
+        if(input.nif !== undefined){
+            values.push(input.nif)
+            updates.push(`nif = $${values.length}`)
+        }
+
+        if(input.name !== undefined){
+            values.push(input.name)
+            updates.push(`nome = $${values.length}`)
+        }
+
+        if(input.role !== undefined){
+            values.push(input.role)
+            updates.push(`cargo = $${values.length}`)
+        }
+
+        if(input.password !== undefined){
+            values.push(input.password)
+            updates.push(`senha = $${values.length}`)
+        }
+
+        if(updates.length === 0){
+            return user
+        }
+
+        //Mesma ideia daquele concat, porem a logica de como a gente usava ele estava errada, agora ele junta toda a array de updates colocando a virgula entre os valores e gerando a string do set de uma vez
+        
+
+        
+
+        values.push(id)
+
+
+        /*
+            Não sabia dessa parada mas essa função "sql" dentro dos teamplates literais forçam a string a ser lida como sql puro, ent nn vem entre aspas pelo oq entendi
+        */
+        const [update] = await sql<any[]>`UPDATE usuario SET ${sql(updates.join(', '))} WHERE id_usuario = $${values.length}`
+
+        if (update.length === 0) return undefined;
+
+        return update
+
+
 
         // if (input.email !== undefined) user.email = input.email;
         // if (input.name !== undefined) user.name = input.name;
@@ -51,44 +97,8 @@ class UserRepository {
         // if (input.nif !== undefined) user.nif = input.nif
         // if (input.role !== undefined) user.role = input.role
 
-        let query = `UPDATE usuario`
-        if (userUpdate.name) {
-            query.concat(` SET name = ${userUpdate.name} `)
-            if (userUpdate.email || userUpdate.role || userUpdate.nif || userUpdate.password) {
-                query.concat(`,`)
-            }
-        }
 
-        if (userUpdate.email) {
-            query.concat(` SET email = ${userUpdate.email} `)
-            if (userUpdate.role || userUpdate.nif || userUpdate.password) {
-                query.concat(`,`)
-            }
-        }
 
-        if (userUpdate.role) {
-            query.concat(` SET role = ${userUpdate.role} `)
-            if (userUpdate.nif || userUpdate.password) {
-                query.concat(` , `)
-            }
-        }
-
-        if (userUpdate.nif) {
-            query.concat(` SET nif = ${userUpdate.nif} `)
-            if (userUpdate.password) {
-                query.concat(` , `)
-            }
-        }
-
-        if (userUpdate.password) {
-            query.concat(` SET password = ${userUpdate.password} `)
-        }
-
-        query.concat(` where id_usuario = ${id}`)
-
-        console.log("query final: " + query);
-        const update = await sql`${query}`;
-        return update
 
     }
 }

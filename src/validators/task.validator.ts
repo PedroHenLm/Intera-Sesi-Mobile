@@ -12,9 +12,9 @@ export const createTaskSchema = z.object({
 
   prazo_estipulado: z.string(),
 
-  setor_responsavel: z.string.refine((val) => setor.includes(val), {
-    message: 'Setor inválido',
-  }),
+  // setor_responsavel: z.string.refine((val) => setor.includes(val), {
+  //   message: 'Setor inválido',
+  // }),
 
   descricao: z.string()
   
