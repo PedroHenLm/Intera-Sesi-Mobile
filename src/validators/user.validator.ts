@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const roles = ['direction','teacher', 'inspector','coordination','Kitchen']
+const roles = ['direction','teacher', 'inspector','coordination','~~']
  
 export const createUserSchema = z.object({
   name: z.string().trim().min(3, 'A name is required'),
@@ -22,4 +22,10 @@ export const updateUserSchema = z.object({
   name: z.string(),
 
   email: z.string().email()
+});
+
+export const UserLogin = z.object({
+  email: z.string().email("Invalid Email"),
+
+  password: z.string().regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])^[\x21-\x7e]{8,255}$/).min(8),
 })

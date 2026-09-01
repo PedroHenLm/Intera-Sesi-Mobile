@@ -25,3 +25,8 @@ export type UpdateUser = {
     role?: UserRoles;
     nif?: string;
 }
+
+export type LoginUser ={
+    email: string
+    password: string
+}
