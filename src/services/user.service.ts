@@ -2,6 +2,7 @@
 import { NotFoundError, UnauthorizedError } from '../utils/http-error.js';
 import type { User, CreateUser, UpdateUser, LoginUser } from '../types/user.js';
 import { userRepository } from '../repositories/user.repository.js';
+import { CompararHash } from '../utils/bcrypt.js';
 
 
 
@@ -39,8 +40,15 @@ export const userService = {
             throw new UnauthorizedError('Verify your email or password')
         }
 
+        const PassValid = await CompararHash(input.password, user.password || '')
 
-        return
+        if(PassValid){
+            throw new UnauthorizedError('Verify your email or password')
+        }
+
+        const {password, ...UserNoPass} = user
+
+        return UserNoPass as User
 
     }
 }

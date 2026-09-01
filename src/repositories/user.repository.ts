@@ -16,7 +16,7 @@ class UserRepository {
     }
 
     async create(input: CreateUser) {
-        const hash = CriarHash(input.password, 10)
+        const hash = await CriarHash(input.password, 10)
 
         const userCreation = {
             name: input.name,
