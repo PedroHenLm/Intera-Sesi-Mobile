@@ -16,6 +16,7 @@ export const userController = {
 
     async create(req: Request, res: Response): Promise<void> {
         const newUser = await userService.create(req.body)
+        console.log(res.status)
         res.status(201).json({ data: newUser })
     },
 
@@ -26,8 +27,18 @@ export const userController = {
     },
 
     async update(req: Request, res: Response): Promise<void> {
-    const { id } = req.params as {id: string};
-    const updatedUser = await userService.update(id, req.body);
-    res.status(200).json({ data: updatedUser });
-  },
+        const { id } = req.params as {id: string};
+        const updatedUser = await userService.update(id, req.body);
+        res.status(200).json({ data: updatedUser });
+    },
+
+    async login(req: Request, res: Response): Promise<void>{
+        const user = await userService.login(req.body)
+
+        res.status(200).json({
+            message: 'Teste',
+            data: user
+        })
+    }
+
 }

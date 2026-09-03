@@ -1,7 +1,7 @@
-import { randomUUID } from "node:crypto";
-import type { User, CreateUser, UpdateUser } from "../types/user.js";
+import type { User, CreateUser, UpdateUser, LoginUser } from "../types/user.js";
 import sql from "../db.js";
-import { email } from "zod/v4";
+import { CriarHash } from "../utils/bcrypt.js";
+ 
 
 class UserRepository {
 
@@ -16,12 +16,14 @@ class UserRepository {
     }
 
     async create(input: CreateUser) {
+        const hash = await CriarHash(input.password, 10)
+
         const userCreation = {
             name: input.name,
             email: input.email,
             role: input.role,
             nif: input.nif,
-            password: input.password
+            password: hash
         }
 
 
@@ -40,42 +42,42 @@ class UserRepository {
         if (!user) return undefined
 
         const values: any[] = []
-        const updates: string[]= []
+        const updates: string[] = []
 
-        if(input.email !== undefined){
+        if (input.email !== undefined) {
             values.push(input.email)
             updates.push(`email = $${values.length}`)
-            
+
         }
 
-        if(input.nif !== undefined){
+        if (input.nif !== undefined) {
             values.push(input.nif)
             updates.push(`nif = $${values.length}`)
         }
 
-        if(input.name !== undefined){
+        if (input.name !== undefined) {
             values.push(input.name)
             updates.push(`nome = $${values.length}`)
         }
 
-        if(input.role !== undefined){
+        if (input.role !== undefined) {
             values.push(input.role)
             updates.push(`cargo = $${values.length}`)
         }
 
-        if(input.password !== undefined){
+        if (input.password !== undefined) {
             values.push(input.password)
             updates.push(`senha = $${values.length}`)
         }
 
-        if(updates.length === 0){
+        if (updates.length === 0) {
             return user
         }
 
         //Mesma ideia daquele concat, porem a logica de como a gente usava ele estava errada, agora ele junta toda a array de updates colocando a virgula entre os valores e gerando a string do set de uma vez
-        
 
-        
+
+
 
         values.push(id)
 
@@ -99,6 +101,16 @@ class UserRepository {
 
 
 
+
+    }
+
+    async login(input: LoginUser): Promise<User | undefined> {
+        const [user] = await sql<User[]>`
+        SELECT * FROM usuario 
+        WHERE email = ${input.email}
+    `;
+
+        return user
 
     }
 }
