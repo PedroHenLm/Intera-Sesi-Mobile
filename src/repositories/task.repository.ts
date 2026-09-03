@@ -4,15 +4,15 @@ import sql from '../db.js';
 
 class TaskRepository {
   //visualizar todas as tarefas
-  async findAll(): Promise<Task[]> {
+  async findAll(): Promise<Task[] | undefined> {
     const task = await sql<Task[]>`SELECT * FROM requisicao`;
     return task;
   }
-  
+
   //visualizar tarefa especifica
-  async findById(id: string): Promise<Task[] | undefined> {
+  async findById(id: string): Promise<Task | undefined> {
     const task = await sql<Task[]>`SELECT * FROM requisicao WHERE id_requisicao = ${id}`;
-    return task;
+    return task[0];
   }
 
   //criar nova tarefa
@@ -36,15 +36,18 @@ class TaskRepository {
     return criar;
   }
 
-  // update(id: string, input: UpdateTaskInput): Task | undefined {
-  //   const task = this.findById(id);
-  //   if (!task) return undefined;
+  async update(id: string, input: UpdateTask) {
+    const task = await this.findById(id);
+    if (!task) return undefined;
 
-  //   if (input.title !== undefined) task.title = input.title;
-  //   if (input.done !== undefined) task.done = input.done;
+    const atualizar = await sql`UPDATE requisicao SET 
+    prazo_estipulado = ${input.prazo_estipulado},
+    setor_responsavel = ${input.setor_responsavel},
+    descricao = ${input.descricao},
+    status_req = ${input.status_req}`;
 
-  //   return task;
-  // }
+    return atualizar;
+  }
 
   async delete(id: string) {
     const deletar = await sql`DELETE FROM requisicao WHERE id_requisicao = ${id}`;

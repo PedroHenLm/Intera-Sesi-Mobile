@@ -16,6 +16,7 @@ export type CreateTask = {
   prazo_estipulado: string;
   setor_responsavel: setor;
   descricao: string;
+  imagen?: Blob
 };
 
 export type UpdateTask = {
@@ -23,4 +24,5 @@ export type UpdateTask = {
   setor_responsavel: setor;
   descricao: string;
   status_req: status;
+  imagem?: Blob
 };
