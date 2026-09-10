@@ -1,15 +1,19 @@
 export interface Count{
     id: string;
-    contagem: number;
-    status: boolean;
+    count: number;
+    status: number;
+    user: string;
+    Class: string;
 }
 
 export type CreateCount = {
-    contagem: number;
-    status: boolean;
+    count: number;
+    status: number;
+    user: string;
+    Class: string;
 }
 
 export type UpdateCount={
-    contagem: number;
+    count: number;
 }
 

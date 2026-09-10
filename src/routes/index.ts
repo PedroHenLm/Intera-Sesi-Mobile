@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { taskRouter } from './task.routes.js';
 import { userRouter } from './user.routes.js';
+import { countRouter } from './count.routes.js';
 
 export const router = Router();
 
@@ -29,3 +30,5 @@ router.get('/health', (_req, res) => {
 router.use('/tasks', taskRouter);
 
 router.use('/users', userRouter)
+
+router.use('/count', countRouter)
