@@ -27,7 +27,8 @@ class CountRepository{
     }
 
     async Update(input:UpdateCount, id:string) {
-        const update = await sql`UPDATE contagem SET contagem = ${input.count} where id_contagem ${id}`
+        console.log(input, id)
+        const update = await sql`UPDATE contagem SET contagem = ${input.count} where id_contagem = ${id}`
         return update
     }
 

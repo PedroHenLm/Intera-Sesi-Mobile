@@ -17,12 +17,9 @@ export const countService = {
         return countRepository.Create(input)
     },
 
-    async update(input: UpdateCount, id: string): Promise<Count[] | undefined>{
+    async update(input: UpdateCount, id: string){
         const updateCount = await countRepository.Update(input, id)
-
         if(!updateCount) throw new NotFoundError(`User with id "${id}" not found`);
-
         return updateCount
-
     }
 }
