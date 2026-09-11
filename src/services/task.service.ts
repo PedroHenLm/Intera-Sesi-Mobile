@@ -13,8 +13,8 @@ export const taskService = {
     return task;
   },
 
-  async create(input: CreateTask) {
-    return taskRepository.create(input);
+  async create(input: CreateTask, id: string) {
+    return taskRepository.create(input, id);
   },
 
   async update(id: string, input: UpdateTask){

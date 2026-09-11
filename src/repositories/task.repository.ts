@@ -16,7 +16,7 @@ class TaskRepository {
   }
 
   //criar nova tarefa
-  async create(input: CreateTask) {
+  async create(input: CreateTask, id: string) {
     const taskCreation = {
       data_criacao: input.data_criacao,
       prazo_estipulado: input.prazo_estipulado,
@@ -25,12 +25,14 @@ class TaskRepository {
     };
 
     const criar =
-      await sql`INSERT INTO requisicao (data_criacao, prazo_estipulado, setor_responsavel, descricao) 
+      await sql`INSERT INTO requisicao (data_criacao, prazo_estipulado, setor_responsavel, descricao, id_origem_fk, status_req)
     VALUES (
     ${taskCreation.data_criacao},
     ${taskCreation.prazo_estipulado},
     ${taskCreation.setor_responsavel},
-    ${taskCreation.descricao}
+    ${taskCreation.descricao},
+    ${id},
+    1
     )`;
 
     return criar;

@@ -14,7 +14,8 @@ export const taskController = {
   },
 
   async create(req: Request, res: Response): Promise<void> {
-    const newTask = await taskService.create(req.body);
+    const{id} = req.params as {id: string}
+    const newTask = await taskService.create(req.body, id);
     res.status(201).json({ data: newTask });
   },
 

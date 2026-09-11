@@ -9,8 +9,8 @@ taskRouter.get('/listTask', taskController.list);
 
 taskRouter.get('/listTask/:id', taskController.getById);
 
-taskRouter.post('/newTask', validate(createTaskSchema, 'params'), taskController.create);
+taskRouter.post('/newTask/:id', validate(createTaskSchema, 'body'), taskController.create);
 
 taskRouter.patch('/updateTask', validate(updateTaskSchema, 'params'), taskController.update);
 
-taskRouter.delete('/deleteTask', taskController.delete);
+taskRouter.delete('/deleteTask/:id', taskController.delete);
