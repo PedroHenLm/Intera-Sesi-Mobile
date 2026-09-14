@@ -21,5 +21,11 @@ export const countService = {
         const updateCount = await countRepository.Update(input, id)
         if(!updateCount) throw new NotFoundError(`User with id "${id}" not found`);
         return updateCount
+    },
+
+    async deactivate(id: string){
+        const deactivate = await countRepository.deactivate(id)
+        if(!deactivate) throw new NotFoundError(`User with id "${id}" not found`);
+        return deactivate
     }
 }

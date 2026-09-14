@@ -32,6 +32,11 @@ class CountRepository{
         return update
     }
 
+    async deactivate(id: string){
+        const deactivate = await sql `UPDATE contagem SET status = 0 where id_contagem = ${id}`
+        return deactivate
+    }
+
 
 }
 

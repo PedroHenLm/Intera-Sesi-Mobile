@@ -12,3 +12,5 @@ countRouter.get('/:id', countController.getById)
 countRouter.post('/',validate(createCountSchema) ,countController.create)
 
 countRouter.put('/:id', countController.update)
+
+countRouter.put('/close/:id', countController.deactivate)

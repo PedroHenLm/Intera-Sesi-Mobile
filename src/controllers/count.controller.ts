@@ -24,6 +24,12 @@ export const countController ={
         const updateCount = await countService.update(req.body, id )
 
         res.status(200).json({data: updateCount, message : "Atualizado"})
+    },
+    
+    async deactivate(req: Request, res: Response){
+        const {id} = req.params as {id:string}
+        const deactivate = await countService.deactivate(id)
 
+        res.status(200).json({data: deactivate, message: "Bla"})
     }
 }
