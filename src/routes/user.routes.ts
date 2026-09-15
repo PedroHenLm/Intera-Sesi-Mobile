@@ -13,6 +13,6 @@ userRouter.post('/',validate(createUserSchema), userController.create)
 
 userRouter.delete('/:id', userController.delete)
 
-userRouter.patch('/:id', validate(updateUserSchema, 'body'), userController.update)
+userRouter.patch('/:id',  userController.update)
 
 userRouter.post('/login', validate(UserLogin), userController.login)

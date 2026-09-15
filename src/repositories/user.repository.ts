@@ -36,73 +36,32 @@ class UserRepository {
         return deletar
     }
 
-    async update(id: string, input: UpdateUser): Promise<User | undefined> {
-        console.log(input.email)
-        const user = await this.findById(id)
-        if (!user) return undefined
+ async update(id: string, input: UpdateUser): Promise<User | undefined> {
+  const user = await this.findById(id);
+  if (!user) return undefined;
 
-        const values: any[] = []
-        const updates: string[] = []
+  const updateData: Record<string, any> = {};
 
-        if (input.email !== undefined) {
-            values.push(input.email)
-            updates.push(`email = $${values.length}`)
+  if (input.email !== undefined) updateData.email = input.email;
+  if (input.nif !== undefined) updateData.nif = input.nif;
+  if (input.name !== undefined) updateData.nome = input.name;
+  if (input.role !== undefined) updateData.cargo = input.role;
+  if (input.password !== undefined) updateData.senha = input.password;
 
-        }
+  if (Object.keys(updateData).length === 0) {
+    return user;
+  }
 
-        if (input.nif !== undefined) {
-            values.push(input.nif)
-            updates.push(`nif = $${values.length}`)
-        }
+  const [updatedUser] = await sql<User[]>`
+    UPDATE usuario 
+    SET ${sql(updateData, Object.keys(updateData))} 
+    WHERE id_usuario = ${id}
+    RETURNING *
+  `;
 
-        if (input.name !== undefined) {
-            values.push(input.name)
-            updates.push(`nome = $${values.length}`)
-        }
+  return updatedUser;
+}
 
-        if (input.role !== undefined) {
-            values.push(input.role)
-            updates.push(`cargo = $${values.length}`)
-        }
-
-        if (input.password !== undefined) {
-            values.push(input.password)
-            updates.push(`senha = $${values.length}`)
-        }
-
-        if (updates.length === 0) {
-            return user
-        }
-
-        //Mesma ideia daquele concat, porem a logica de como a gente usava ele estava errada, agora ele junta toda a array de updates colocando a virgula entre os valores e gerando a string do set de uma vez
-
-
-
-
-        values.push(id)
-
-
-        /*
-            Não sabia dessa parada mas essa função "sql" dentro dos teamplates literais forçam a string a ser lida como sql puro, ent nn vem entre aspas pelo oq entendi
-        */
-        const [update] = await sql<any[]>`UPDATE usuario SET ${sql(updates.join(', '))} WHERE id_usuario = $${values.length}`
-
-        if (update.length === 0) return undefined;
-
-        return update
-
-
-
-        // if (input.email !== undefined) user.email = input.email;
-        // if (input.name !== undefined) user.name = input.name;
-        // if (input.password !== undefined) user.password = input.password;
-        // if (input.nif !== undefined) user.nif = input.nif
-        // if (input.role !== undefined) user.role = input.role
-
-
-
-
-    }
 
     async login(input: LoginUser): Promise<User | undefined> {
         const [user] = await sql<User[]>`

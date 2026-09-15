@@ -21,7 +21,19 @@ export const createUserSchema = z.object({
 export const updateUserSchema = z.object({
   name: z.string(),
 
-  email: z.string().email()
+  email: z.string().email(),
+  
+  password: z.string(),
+
+  role: z.string().refine(
+    (val) => roles.includes(val), {
+      message: 'Cargo Invalido'
+    }
+  ),
+
+  nif: z.string()
+
+
 });
 
 export const UserLogin = z.object({
