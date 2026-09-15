@@ -8,6 +8,7 @@ import { swaggerSpec } from './config/swagger.js';
 import { errorHandler } from './middlewares/error-handler.js';
 import { notFoundHandler } from './middlewares/not-found.js';
 import { router } from './routes/index.js';
+import fileUpload from "express-fileupload";
 
 export const createApp = (): Express => {
   const app = express();
@@ -29,6 +30,7 @@ export const createApp = (): Express => {
   app.use(express.json());
   app.use(morgan(env.NODE_ENV === 'development' ? 'dev' : 'combined'));
 
+  app.use(fileUpload());
   app.use('/api', router);
   app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.get('/api/docs.json', (_req, res) => {
