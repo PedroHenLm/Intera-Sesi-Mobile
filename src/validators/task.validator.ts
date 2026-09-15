@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-const setor = ['direction', 'teacher', 'inspector', 'coordination', 'Kitchen'];
-const status = ['aberta', 'concluida']
 
 export const taskIdSchema = z.object({
   id: z.string().uuid('id must be a valid uuid'),
@@ -12,21 +10,19 @@ export const createTaskSchema = z.object({
 
   prazo_estipulado: z.string(),
 
-  setor_responsavel: z.string().refine(
-      (val) => setor.includes(val), {
-          message: 'Cargo Invalido'
-      }
-    ),
+  setor_responsavel: z.enum(['direction', 'teacher', 'inspector', 'coordination', 'Kitchen']),
 
-  descricao: z.string()
-  
+  descricao: z.string(),
 });
 
-export const updateTaskSchema = z
-  .object({
-    title: z.string().trim().min(1, 'title cannot be empty').optional(),
-    done: z.boolean().optional(),
-  })
-  .refine((data) => data.title !== undefined || data.done !== undefined, {
-    message: 'at least one field (title, done) must be provided',
-  });
+export const updateTaskSchema = z.object({
+  prazo_estipulado: z.string(),
+
+  setor_responsavel: z.enum(['direction', 'teacher', 'inspector', 'coordination', 'Kitchen']),
+
+  descricao: z.string(),
+
+  status_req: z.coerce.number().refine((val) => val === 0 || val === 1, {
+    message: 'O número deve ser 0 ou 1',
+  }),
+});

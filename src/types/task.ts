@@ -1,4 +1,4 @@
-export type setor = 'direction' | 'teacher' | 'inspector' | 'coordination' | 'Kitchen';
+export type setor = 'direction' | 'teacher' | 'inspector' | 'coordination' | 'kitchen';
 export type status = 'aberta' | 'concluida';
 
 export interface Task {
@@ -16,7 +16,6 @@ export type CreateTask = {
   prazo_estipulado: string;
   setor_responsavel: setor;
   descricao: string;
-  imagen?: Blob
 };
 
 export type UpdateTask = {
@@ -24,5 +23,4 @@ export type UpdateTask = {
   setor_responsavel: setor;
   descricao: string;
   status_req: status;
-  imagem?: Blob
 };

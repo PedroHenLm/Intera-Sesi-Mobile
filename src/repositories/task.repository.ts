@@ -46,7 +46,7 @@ class TaskRepository {
     prazo_estipulado = ${input.prazo_estipulado},
     setor_responsavel = ${input.setor_responsavel},
     descricao = ${input.descricao},
-    status_req = ${input.status_req}`;
+    status_req = ${input.status_req} WHERE id_requisicao = ${id}`;
 
     return atualizar;
   }

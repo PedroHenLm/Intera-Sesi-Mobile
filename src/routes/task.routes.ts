@@ -11,6 +11,6 @@ taskRouter.get('/listTask/:id', taskController.getById);
 
 taskRouter.post('/newTask/:id', validate(createTaskSchema, 'body'), taskController.create);
 
-taskRouter.patch('/updateTask', validate(updateTaskSchema, 'params'), taskController.update);
+taskRouter.patch('/updateTask/:id', validate(updateTaskSchema, 'body'), taskController.update);
 
 taskRouter.delete('/deleteTask/:id', taskController.delete);
