@@ -2,6 +2,11 @@ import sql from "../db.js";
 import { close, DoClose } from "../types/close.js";
 
 class closeRepository{
+    async findByReq(id: string){
+        const find = await sql`SELECT * FROM baixa WHERE id_requisicao = ${id}`
+        return find
+    }
+
     async doClose(input: DoClose){
         const doClose= {
             observation : input.observation,

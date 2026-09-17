@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { taskRouter } from './task.routes.js';
 import { userRouter } from './user.routes.js';
 import { countRouter } from './count.routes.js';
+import { closeRouter } from './close.routes.js';
 
 export const router = Router();
 
@@ -32,3 +33,5 @@ router.use('/tasks', taskRouter);
 router.use('/users', userRouter)
 
 router.use('/count', countRouter)
+
+router.use('/close', closeRouter)
