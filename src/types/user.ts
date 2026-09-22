@@ -1,13 +1,18 @@
 export type UserRoles = 'direction'| 'teacher'| 'inspector'| 'coordination'| 'Kitchen'
 
-export interface User {
-    id: string;
+export type User = {
+    id_usuario: string;
     name: string;
     email: string;
-    role: UserRoles;
+    cargo: UserRoles;
     nif: string;
     createdAt: string;
     password?: string;
+}
+
+export type UserLogin = {
+    id_usuario: string;
+    cargo: UserRoles;
 }
 
 export type CreateUser = {

@@ -1,6 +1,6 @@
 
 import { NotFoundError, UnauthorizedError } from '../utils/http-error.js';
-import type { User, CreateUser, UpdateUser, LoginUser } from '../types/user.js';
+import type { User, CreateUser, UpdateUser, LoginUser, UserLogin } from '../types/user.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { CompararHash } from '../utils/bcrypt.js';
 
@@ -33,7 +33,7 @@ export const userService = {
     return updatedUser;
   },
 
-    async login(input: LoginUser): Promise<User>{
+    async login(input: LoginUser): Promise<UserLogin>{
         const user = await userRepository.login(input)
 
         if(!user){
@@ -46,9 +46,11 @@ export const userService = {
             throw new UnauthorizedError('Verify your email or password')
         }
 
-        const {password, ...UserNoPass} = user
+        console.log(user);
 
-        return UserNoPass as User
+        const {id_usuario, cargo} = user
+
+        return {id_usuario, cargo} as UserLogin
 
     }
 }

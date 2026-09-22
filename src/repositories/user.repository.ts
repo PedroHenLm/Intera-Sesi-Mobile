@@ -1,4 +1,4 @@
-import type { User, CreateUser, UpdateUser, LoginUser } from "../types/user.js";
+import type { User, CreateUser, UpdateUser, LoginUser, UserLogin } from "../types/user.js";
 import sql from "../db.js";
 import { CriarHash } from "../utils/bcrypt.js";
  
