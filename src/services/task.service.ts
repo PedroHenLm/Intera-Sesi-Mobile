@@ -13,6 +13,12 @@ export const taskService = {
     return task;
   },
 
+  async getByRole(role:string): Promise<Task[] | undefined> {
+    const task = await taskRepository.findByRole(role)
+    if(!task) throw new NotFoundError(`Not found a task to the ${role} role`)
+    return task
+  },
+
   async create(input: CreateTask, id: string) {
     return taskRepository.create(input, id);
   },

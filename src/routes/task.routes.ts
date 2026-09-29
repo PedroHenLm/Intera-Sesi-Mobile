@@ -9,6 +9,8 @@ taskRouter.get('/listTask', taskController.list);
 
 taskRouter.get('/listTask/:id', taskController.getById);
 
+taskRouter.get('/listTaskRole/:role', taskController.getByRole)
+
 taskRouter.post('/newTask/:id', validate(createTaskSchema, 'body'), taskController.create);
 
 taskRouter.patch('/updateTask/:id', validate(updateTaskSchema, 'body'), taskController.update);

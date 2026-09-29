@@ -1,5 +1,6 @@
 export type setor = 'direction' | 'teacher' | 'inspector' | 'coordination' | 'kitchen';
 export type status = 'aberta' | 'concluida';
+export type urgencia = 'Não urgente'|'Normal'| 'Urgente' ;
 
 export interface Task {
   id_requisicao: number;
@@ -9,6 +10,7 @@ export interface Task {
   setor_responsavel: setor;
   descricao: string;
   status_req: status;
+  urgencia: urgencia;
 }
 
 export type CreateTask = {
@@ -16,6 +18,7 @@ export type CreateTask = {
   prazo_estipulado: string;
   setor_responsavel: setor;
   descricao: string;
+  urgencia: urgencia;
 };
 
 export type UpdateTask = {

@@ -13,6 +13,13 @@ export const taskController = {
     res.status(200).json({ data: task });
   },
 
+  async getByRole(req: Request, res: Response): Promise<void>{
+    const {role} = req.params as {role: string}
+    const task = await taskService.getByRole(role)
+    res.status(200).json({data: task, message : 'oi'})
+    
+  },
+
   async create(req: Request, res: Response): Promise<void> {
     const{id} = req.params as {id: string}
     const newTask = await taskService.create(req.body, id);
