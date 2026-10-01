@@ -19,6 +19,8 @@ class TaskRepository {
   
   async findByRole(role: string): Promise<Task[] | undefined>{
     const task = await sql<Task[]>`SELECT * FROM requisicao WHERE setor_responsavel = ${role} `
+        console.log(task)
+
     return task
   }
 
