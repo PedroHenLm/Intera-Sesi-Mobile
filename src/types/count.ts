@@ -3,14 +3,14 @@ export interface Count{
     count: number;
     status: number;
     user: string;
-    Class: string;
+    classroom: string;
 }
 
 export type CreateCount = {
     count: number;
     status: number;
     user: string;
-    Class: string;
+    classroom: string;
 }
 
 export type UpdateCount={

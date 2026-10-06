@@ -7,7 +7,7 @@ export const createCountSchema = z.object({
 
     user: z.string(),
 
-    Class: z.string()
+    classroom: z.string()
 })
 
 export const updateCountSchema= z.object({

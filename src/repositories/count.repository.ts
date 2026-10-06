@@ -16,11 +16,11 @@ class CountRepository{
         const countCreation = {
             count : input.count,
             status: input.status,
-            Class: input.Class,
+            classroom: input.classroom,
             user: input.user
         }
 
-        const create = await sql`INSERT INTO contagem(contagem, status, id_usuario, sala_id) VALUES (${countCreation.count}, ${countCreation.status}, ${countCreation.user}, ${countCreation.Class})`
+        const create = await sql`INSERT INTO contagem(contagem, status, id_usuario, sala_id) VALUES (${countCreation.count}, ${countCreation.status}, ${countCreation.user}, ${countCreation.classroom})`
 
         return create
 
