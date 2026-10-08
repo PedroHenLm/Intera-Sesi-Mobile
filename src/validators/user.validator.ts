@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const roles = ['direction','teacher', 'inspector','coordination','~~']
+const roles = ['direction','teacher', 'inspector','coordination','kitchen']
  
 export const createUserSchema = z.object({
   name: z.string().trim().min(3, 'A name is required'),

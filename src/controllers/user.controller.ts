@@ -15,8 +15,10 @@ export const userController = {
     },
 
     async create(req: Request, res: Response): Promise<void> {
+        console.log("aqui")
         const newUser = await userService.create(req.body)
         console.log(res.status)
+        
         res.status(201).json({ data: newUser })
     },
 

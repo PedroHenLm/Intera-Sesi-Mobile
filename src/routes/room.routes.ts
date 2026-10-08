@@ -6,3 +6,5 @@ import { roomControler } from "../controllers/room.controller.js";
 export const roomRouter = Router()
 
 roomRouter.get("/", roomControler.list)
+
+roomRouter.put("/close/:id", roomControler.deactivate)
