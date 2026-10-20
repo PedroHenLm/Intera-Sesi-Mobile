@@ -7,9 +7,9 @@ export const countRouter = Router();
 
 countRouter.get('/', countController.list)
 
-countRouter.get('/:id', countController.getById)
-
 countRouter.get('/find', countController.FindName)
+
+countRouter.get('/:id', countController.getById)
 
 countRouter.post('/',validate(createCountSchema) ,countController.create)
 
