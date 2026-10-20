@@ -12,6 +12,10 @@ export const countService = {
         if(!count) throw new NotFoundError(`User with id "${id}" not found`);
         return count
     },
+
+    async FindName(){
+        return countRepository.FindName()
+    },
     
     async create(input: CreateCount){
         return countRepository.Create(input)

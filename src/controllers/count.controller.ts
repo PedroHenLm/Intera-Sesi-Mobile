@@ -14,6 +14,11 @@ export const countController ={
         res.status(200).json({data: count})
     },
 
+    async FindName(req: Request, res: Response){
+        const find = await countService.FindName()
+        res.status(200).json({data: find, message: 'Encontrado'})
+    },
+
     async create(req: Request, res: Response): Promise<void>{
         const newCount = await countService.create(req.body)
         res.status(201).json({data : newCount})

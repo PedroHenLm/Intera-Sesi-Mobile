@@ -1,20 +1,31 @@
 import sql from "../db.js";
 import { Count, CreateCount, UpdateCount } from "../types/count.js";
 
-class CountRepository{
-    async findAll(): Promise<Count[] | undefined>{
+class CountRepository {
+    async findAll(): Promise<Count[] | undefined> {
         const counts = await sql<Count[]>`SELECT * FROM contagem`
         return counts
     }
 
-    async findById(id: string): Promise<Count[] | undefined>{
+    async findById(id: string): Promise<Count[] | undefined> {
         const count = await sql<Count[]>`Select * FROM contagem WHERE id_contagem = ${id}`
         return count
     }
 
-    async Create(input: CreateCount){
+    async FindName() {
+        const find = await sql`SELECT 
+    contagem.*, 
+    sala.nome AS nome_sala
+FROM contagem
+INNER JOIN sala ON contagem.sala_id = sala.id_sala;
+`
+
+        return find
+    }
+
+    async Create(input: CreateCount) {
         const countCreation = {
-            count : input.count,
+            count: input.count,
             status: input.status,
             classroom: input.classroom,
             user: input.user
@@ -26,14 +37,14 @@ class CountRepository{
 
     }
 
-    async Update(input:UpdateCount, id:string) {
+    async Update(input: UpdateCount, id: string) {
         console.log(input, id)
         const update = await sql`UPDATE contagem SET contagem = ${input.count} where id_contagem = ${id}`
         return update
     }
 
-    async deactivate(id: string){
-        const deactivate = await sql `UPDATE contagem SET status = 0 where id_contagem = ${id}`
+    async deactivate(id: string) {
+        const deactivate = await sql`UPDATE contagem SET status = 0 where id_contagem = ${id}`
         return deactivate
     }
 
