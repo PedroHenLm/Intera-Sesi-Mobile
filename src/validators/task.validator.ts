@@ -10,7 +10,7 @@ export const createTaskSchema = z.object({
 
   prazo_estipulado: z.string(),
 
-  setor_responsavel: z.enum(['direction', 'teacher', 'inspector', 'coordination', 'Kitchen']),
+  setor_responsavel: z.enum(['direction', 'teacher', 'inspector', 'coordination', 'kitchen']),
 
   descricao: z.string(),
 
@@ -20,7 +20,7 @@ export const createTaskSchema = z.object({
 export const updateTaskSchema = z.object({
   prazo_estipulado: z.string(),
 
-  setor_responsavel: z.enum(['direction', 'teacher', 'inspector', 'coordination', 'Kitchen']),
+  setor_responsavel: z.enum(['direction', 'teacher', 'inspector', 'coordination', 'kitchen']),
 
   descricao: z.string(),
 
