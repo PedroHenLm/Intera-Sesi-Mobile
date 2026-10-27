@@ -1,7 +1,7 @@
 import type { User, CreateUser, UpdateUser, LoginUser, UserLogin } from "../types/user.js";
 import sql from "../db.js";
 import { CriarHash } from "../utils/bcrypt.js";
- 
+
 
 class UserRepository {
 
@@ -36,31 +36,35 @@ class UserRepository {
         return deletar
     }
 
- async update(id: string, input: UpdateUser): Promise<User | undefined> {
-  const user = await this.findById(id);
-  if (!user) return undefined;
+    async update(id: string, input: UpdateUser): Promise<User | undefined> {
+        const user = await this.findById(id);
+        if (!user) return undefined;
 
-  const updateData: Record<string, any> = {};
 
-  if (input.email !== undefined) updateData.email = input.email;
-  if (input.nif !== undefined) updateData.nif = input.nif;
-  if (input.name !== undefined) updateData.nome = input.name;
-  if (input.role !== undefined) updateData.cargo = input.role;
-  if (input.password !== undefined) updateData.senha = input.password;
+        const updateData: Record<string, any> = {};
 
-  if (Object.keys(updateData).length === 0) {
-    return user;
-  }
+        if (input.email !== undefined) updateData.email = input.email;
+        if (input.nif !== undefined) updateData.nif = input.nif;
+        if (input.name !== undefined) updateData.nome = input.name;
+        if (input.role !== undefined) updateData.cargo = input.role;
+        if (input.password !== undefined) updateData.senha = input.password;
 
-  const [updatedUser] = await sql<User[]>`
-    UPDATE usuario 
-    SET ${sql(updateData, Object.keys(updateData))} 
-    WHERE id_usuario = ${id}
-    RETURNING *
-  `;
 
-  return updatedUser;
-}
+        console.log(updateData);
+
+        
+        if (Object.keys(updateData).length === 0) {
+            return user;
+        }
+        const [updatedUser] = await sql<User[]>`
+        UPDATE usuario 
+        SET ${sql(updateData, Object.keys(updateData))} 
+        WHERE id_usuario = ${id}
+        RETURNING *
+    `;
+
+        return updatedUser;
+    }
 
 
     async login(input: LoginUser): Promise<User | undefined> {

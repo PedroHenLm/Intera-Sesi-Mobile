@@ -26,6 +26,8 @@ export const userService = {
     },
 
     async update(id: string, input: UpdateUser): Promise<User> {
+
+        console.log(input);
     const updatedUser = await userRepository.update(id, input);
     if (!updatedUser) {
       throw new NotFoundError(`User with id "${id}" not found`);

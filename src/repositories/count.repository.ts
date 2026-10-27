@@ -17,7 +17,9 @@ class CountRepository {
     contagem.*, 
     sala.nome AS nome_sala
 FROM contagem
-INNER JOIN sala ON contagem.sala_id = sala.id_sala;
+INNER JOIN sala ON contagem.sala_id = sala.id_sala
+WHERE contagem.status = 1;
+;
 `
 
         return find
