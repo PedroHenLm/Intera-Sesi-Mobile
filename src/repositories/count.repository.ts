@@ -3,7 +3,7 @@ import { Count, CreateCount, UpdateCount } from "../types/count.js";
 
 class CountRepository {
     async findAll(): Promise<Count[] | undefined> {
-        const counts = await sql<Count[]>`SELECT * FROM contagem`
+        const counts = await sql<Count[]>`SELECT * FROM contagem Where status = 1`
         return counts
     }
 
