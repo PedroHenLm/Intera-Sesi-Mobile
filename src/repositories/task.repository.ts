@@ -7,7 +7,7 @@ import { NotFoundError } from '../utils/http-error.js';
 class TaskRepository {
   //visualizar todas as tarefas
   async findAll(): Promise<Task[] | undefined> {
-    const task = await sql<Task[]>`SELECT * FROM requisicao`;
+    const task = await sql<Task[]>`SELECT * FROM requisicao Where status_req = 1`;
     return task;
   }
 
