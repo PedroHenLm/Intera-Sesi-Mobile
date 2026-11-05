@@ -50,6 +50,13 @@ WHERE contagem.status = 1;
         return deactivate
     }
 
+    async Sum() {
+        const Sum = await sql`SELECT COUNT(*) AS ativo
+FROM contagem
+WHERE status = 1;`
+        return Sum
+    }
+
 
 }
 

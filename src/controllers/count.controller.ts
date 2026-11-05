@@ -36,5 +36,11 @@ export const countController ={
         const deactivate = await countService.deactivate(id)
 
         res.status(200).json({data: deactivate, message: "Bla"})
+    },
+
+    async Sum(_req: Request, res: Response){
+        const Sum = await countService.Sum()
+        
+        res.status(200).json({data: Sum, message: "Soma"})
     }
 }

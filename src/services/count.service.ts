@@ -31,5 +31,10 @@ export const countService = {
         const deactivate = await countRepository.deactivate(id)
         if(!deactivate) throw new NotFoundError(`User with id "${id}" not found`);
         return deactivate
+    },
+
+    async Sum() {
+        const Sum = await countRepository.Sum()
+        return Sum 
     }
 }

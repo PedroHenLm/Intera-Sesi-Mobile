@@ -16,3 +16,5 @@ countRouter.post('/',validate(createCountSchema) ,countController.create)
 countRouter.put('/:id', countController.update)
 
 countRouter.put('/close/:id', countController.deactivate)
+
+countRouter.get('/Sum', countController.Sum)
