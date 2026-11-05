@@ -51,9 +51,8 @@ WHERE contagem.status = 1;
     }
 
     async Sum() {
-        const Sum = await sql`SELECT COUNT(*) AS ativo
-FROM contagem
-WHERE status = 1;`
+        const Sum = await sql`SELECT SUM(contagem) AS total_soma
+FROM contagem Where status = 1;`
         return Sum
     }
 

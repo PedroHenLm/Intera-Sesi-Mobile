@@ -6,7 +6,7 @@ import { taskRepository } from "../repositories/task.repository.js";
 
 export const closeService = {
     async close(input: DoClose){
-        const req = await taskRepository.findById(input.id_req)
+        const req = await CloseRepository.doClose(input)
         if (!req) throw new UnauthorizedError(`Req with id = ${input.id_req} not found`)
         
         return CloseRepository.doClose(input)
